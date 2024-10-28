@@ -1,26 +1,49 @@
 {% extends "base.html" %}
 
 {% block start %}
-
-
 <section>
     <div class="container">
-       
         <div class="row text-center">
-            <div class="col-xl-10 mx-auto"><img class="img-fluid mb-5"
-                    src="/media/{{blog_obj.image}}"
-                    alt=""></div>
+            <div class="col-xl-10 mx-auto">
+                <img class="img-fluid mb-5" src="/media/{{ blog_obj.image }}" alt="">
+            </div>
         </div>
         <div class="row">
             <div class="col-xl-8 col-lg-10 mx-auto">
                 <div class="text-content">
-                    {{blog_obj.content|safe}}
+                    {{ blog_obj.content|safe }}
                 </div>
+            </div>
+        </div>
+        
+        <!-- Comments Section -->
+        <div class="row">
+            <div class="col-xl-8 col-lg-10 mx-auto mt-5">
+                <h3>Comments</h3>
+                <div class="comments-section">
+                    {% for comment in blog_obj.comment_set.all %}
+                        <div class="comment">
+                            <strong>{{ comment.user.username }}</strong> 
+                            <p>{{ comment.text }}</p>
+                            <small class="text-muted">{{ comment.created_at }}</small>
+                        </div>
+                        <hr>
+                    {% empty %}
+                        <p>No comments yet. Be the first to comment!</p>
+                    {% endfor %}
+                </div>
+                
+                <!-- Comment Form -->
+                <h4>Add a Comment</h4>
+                <form method="POST" action="{% url 'add_comment' blog_obj.slug %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea class="form-control" name="text" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                </form>
             </div>
         </div>
     </div>
 </section>
-
-
-
 {% endblock %}
